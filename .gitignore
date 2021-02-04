@@ -201,3 +201,6 @@ dmypy.json
 .vscode/
 
 # End of https://www.gitignore.io/api/macos,python,jupyternotebook,jupyternotebooks
+
+# slurm job file
+job.sh

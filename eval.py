@@ -22,10 +22,14 @@ parser.add_argument('--gpus', type=int, nargs='+',
                     help='which gpus to run on')
 parser.add_argument('--logdir', type=str, default='./outputs/',
                     help=f'path to log dir')
+parser.add_argument('--run-all', action='store_true', 
+                    help='run on all models')
 args = parser.parse_args()
 
-
-assert args.models is not None, 'Please specify at least one model'
+if args.run_all:
+    args.models = registry.model_names()
+else:
+    assert args.models is not None, 'Please specify at least one model'
 assert args.eval_settings is not None, 'Please specify at least one evaluation setting'
 assert args.gpus is not None, 'Please specify at least one gpu to run on'
 
@@ -37,7 +41,8 @@ for model in args.models:
         registry.get_eval_setting(eval_setting).get_dataset_root()
 
         dt = datetime.datetime.fromtimestamp(time.time())
-        logdir = join(args.logdir, dt.strftime('%Y-%m-%d_%H:%M:%S'))
+        # logdir = join(args.logdir, dt.strftime('%Y-%m-%d_%H:%M:%S'))
+        logdir = join(args.logdir, model + '-' + eval_setting)
 
         cmd_params = f'--model={model} --eval-setting={eval_setting} {"--db" if args.db else ""} --logdir={logdir}'
         cmd = f'CUDA_VISIBLE_DEVICES={",".join(map(str, args.gpus))} {sys.executable} src/inference.py {cmd_params}'

@@ -34,7 +34,7 @@ def main(args):
     image_paths = np.concatenate([results_dict[i]['image_paths'] for i in range(args.num_gpus)])[idx_map]
 
     metrics = py_eval_setting.get_metrics(logits, targets, image_paths, py_model)
-
+    
     with open(join(args.logdir, 'metrics.json'), 'w') as outfile:
         json.dump(metrics, outfile)
     torch.save(logits, join(args.logdir, 'logits.pt'))
